@@ -4,18 +4,19 @@ namespace app\admin\controller;
 use think\Controller;
 use app\common\controller\Common;
 use think\Request;
+use app\admin\model\Manager;
 
 class Base extends Common
 {   
     //登录
     public function login()
     {
-        $userModel = model('User');
         $param = $this->param;
         $username = $param['username'];
         $password = $param['password'];
+        $managerModel = new Manager;
         // $verifyCode = !empty($param['verifyCode'])? $param['verifyCode']: '';
-        $data = $userModel->login($username, $password);
+        $data = $managerModel->login($username, $password);
         if (!$data) {
             return resultArray(['error' => $userModel->getError()]);
         }

@@ -4,14 +4,14 @@ namespace app\admin\model;
 use think\Model;
 use think\facade\Session;
 
-class User extends Model
+class Manager extends Model
 {   
-    protected $name = 'admin_user';
-    protected $createTime = 'create_time';
+    protected $name = 'manager';
+    protected $mg_time = 'mg_time';
     protected $updateTime = false;
 	protected $autoWriteTimestamp = true;
 	protected $insert = [
-		'status' => 1,
+		'mg_state' => 1,
     ];
     
     public function login($username, $password)
@@ -26,19 +26,20 @@ class User extends Model
             return false;
         }
 
-        $data['username'] = $username;
+        $data['mg_name'] = $username;
         $userInfo = $this->where($data)->find();
+
         if (!$userInfo) {
             $this->error = '帐号不存在';
             return false;
         }
 
-        if (user_md5($userInfo['password']) !== $password) {
+        if (user_md5($password) !== $userInfo['mg_pwd']) {
             $this->error = '密码不正确';
             return false;
         }
 
-        if ($userInfo['status'] === 0) {
+        if ($userInfo['mg_state'] === 0) {
             $this->error = '帐号已被禁用';
 			return false;
         }
@@ -47,7 +48,7 @@ class User extends Model
         session_start();
         $info['userInfo'] = $userInfo;
         $info['sessionId'] = session_id();
-        $authKey = user_md5($userInfo['username'].$userInfo['password'].$info['sessionId']);
+        $authKey = user_md5($userInfo['mg_name'].$userInfo['mg_pwd'].$info['sessionId']);
         $info['authKey'] = $authKey;
         cache('Auth_'.$authKey, null);
         cache('Auth_'.$authKey, $info, config('LOGIN_SESSION_VALID'));

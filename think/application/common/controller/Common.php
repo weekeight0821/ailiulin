@@ -11,12 +11,10 @@ class Common extends Controller
     {   
         parent::_initialize();
         /*防止跨域*/      
-        if (isset($_SERVER['HTTP_ORIGIN']) && empty(_SERVER['HTTP_ORIGIN'])) {
-            header('Access-Control-Allow-Origin: '.$_SERVER['HTTP_ORIGIN']); 
-        }
+        header('Access-Control-Allow-Origin: *'); 
         header('Access-Control-Allow-Credentials: true');
         header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
-        header("Access-Control-Allow-Headers: Origin, X-Requested-With, Content-Type, Accept, authKey, sessionId");
+        header("Access-Control-Allow-Headers: Origin, X-Requested-With, Content-Type, Accept, Authorization, sessionId");
         $this->param = Request::instance()->param();
     }
 

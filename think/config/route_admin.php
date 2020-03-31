@@ -17,6 +17,7 @@ return [
 
     // 基础 登录
     'login' => ['admin/base/login', ['method' => 'POST']],
+    'menus' => ['admin/menus/getMenusList', ['method' => 'GET']],
     // // 基础 登录
     // '/index' => ['admin/base/index', ['method' => 'POST']],
     //miss路由

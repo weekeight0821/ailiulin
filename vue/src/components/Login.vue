@@ -30,8 +30,8 @@ export default {
   data () {
     return {
       loginForm: {
-        username: '',
-        password: ''
+        username: 'test',
+        password: '123456'
       },
       loginFormRules: {
         username: [
@@ -55,6 +55,13 @@ export default {
         if (!valid) return
         const { data: res } = await this.$http.post('login', this.loginForm)
         console.log(res)
+        if (res.meta.code !== 200) {
+          return this.$message.error('登陆失败!')
+        } else {
+          this.$message.success('登陆成功!')
+          window.sessionStorage.setItem('token', res.data.authKey)
+          this.$router.push('/home')
+        }
       })
     }
   }
