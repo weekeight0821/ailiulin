@@ -13,13 +13,13 @@ return [
     // 数据库类型
     'type'            => 'mysql',
     // 服务器地址
-    'hostname'        => 'mysql',
+    'hostname'        => '47.93.125.23',
     // 数据库名
     'database'        => 'vuethink',
     // 用户名
-    'username'        => 'blog',
+    'username'        => 'root',
     // 密码
-    'password'        => '123456',
+    'password'        => 'w4028981',
     // 端口
     'hostport'        => '3306',
     // 连接dsn
