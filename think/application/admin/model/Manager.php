@@ -3,7 +3,7 @@ namespace app\admin\model;
 
 use think\Model;
 use think\facade\Session;
-
+use think\Db;
 class Manager extends Model
 {   
     protected $name = 'manager';
@@ -57,5 +57,45 @@ class Manager extends Model
         $data['sessionId']		= $info['sessionId'];
         $data['userInfo']		= $userInfo;
         return $data;
+    }
+
+    public function getList($query, $pagenum, $pagesize)
+    {
+        $where = [];
+        if ($query) {
+            $where['sp_manager.mg_name'] = array('like', '%'.$query.'%');
+        }
+        $result = Db::table('sp_manager')->alias('m')->where($where)
+                   ->join('sp_role r','r.role_id  = m.role_id ','LEFT')
+                   ->page($pagenum)->limit($pagesize)->field('m.mg_id, m.mg_name, m.mg_mobile, m.mg_time, m.mg_email, r.role_name, m.mg_state')->select();
+        $count = count($result);
+
+        if (!empty($result)) {
+            foreach($result as $val) {
+                if (empty($val['role_name'])) {
+                    $val['role_name'] = '超级管理员';
+                }
+                $users[] = $val;
+            }
+        } else {
+            $users = [];
+        }
+
+        $data['totalpage'] = $count;
+        $data['pagenum'] = $pagenum;
+        $data['users'] = $users;
+        
+        return $data;
+    }
+
+    public function getCount($query)
+    {
+        $where = [];
+        if ($query) {
+            $where['mg_name'] = array('like', '%'.$query.'%');
+        }
+
+       $count =  $this->where($where)->count();
+       return $count;
     }
 }
