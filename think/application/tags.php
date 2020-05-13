@@ -11,8 +11,7 @@
 
 // 应用行为扩展定义文件
 return [
-    'app_init'     => [
-        'app\\common\\behavior\\InitConfigBehavior'],
+    'app_init'     => [],
     // 应用开始
     'app_begin'    => [],
     // 模块初始化

@@ -9,48 +9,35 @@
     <el-card>
         <el-row :gutter="20">
                 <el-col :span='9'>
-                    <el-input placeholder="请输入内容">
-                        <el-button slot="append" icon="el-icon-search"></el-button>
+                    <el-input placeholder="请输入内容" v-model="queryInfo.query" clearable @clear="getUserList">
+                        <el-button slot="append" icon="el-icon-search" @click="getUserList"></el-button>
                     </el-input>
                 </el-col>
                 <el-col :span='4'>
                     <el-button type="primary">添加用户</el-button>
                 </el-col>
             </el-row>
-            <el-table :data="tableData" border stripe max-height="250">
-                <el-table-column
-                    type="index">
-                </el-table-column>
-                <el-table-column
-                    prop="name"
-                    label="姓名"
-                    width="180">
-                </el-table-column>
-                <el-table-column
-                    prop="email"
-                    label="邮箱"
-                    width="180">
-                </el-table-column>
-                <el-table-column
-                    prop="mobile"
-                    label="电话">
-                </el-table-column>
-                <el-table-column
-                    prop="role_name"
-                    label="角色">
-                </el-table-column>
-                <el-table-column
-                    prop="mg_state"
-                    label="状态">
+            <el-table :data="userList" border stripe max-height="400">
+                <el-table-column type="index"></el-table-column>
+                <el-table-column prop="mg_name" label="姓名" width="180" sortable></el-table-column>
+                <el-table-column prop="mg_email" label="邮箱" width="180"></el-table-column>
+                <el-table-column label="电话"  prop="mg_state">
                     <!--作用域插槽-->
                     <template slot-scope="scope">
-                        <el-switch v-model="scope.row.mg_state"> </el-switch>
+                        <!-- <el-switch v-model="scope.row.mg_state" @change="userStateChanged(scope.row)"></el-switch> -->
+                        {{scope.row}}
                     </template>
                 </el-table-column>
-                <el-table-column
-                    label="操作" width="180px">
+                <el-table-column prop="role_name" label="角色"></el-table-column>
+                <el-table-column label="状态"  prop="mg_state">
+                    <!--作用域插槽-->
                     <template slot-scope="scope">
-                        <el-button type='primary' icon="el-icon-edit" size="mini"></el-button>
+                        <el-switch v-model="scope.row.mg_state" @change="userStateChanged(scope.row)"></el-switch>
+                    </template>
+                </el-table-column>
+                <el-table-column abel="操作" width="180px">
+                    <template slot-scope="scope">
+                        <el-button type='primary' icon="el-icon-edit" size="mini" @click="showEditDialog(scope.row.id)"></el-button>
                         <el-button type='danger' icon="el-icon-delete" size="mini"></el-button>
                         <el-tooltip  effect="dark" content="分配权限" placement="top" :enterable="false">
                             <el-button type='warning' icon="el-icon-setting" size="mini"></el-button>
@@ -84,35 +71,6 @@ export default {
             },
             userList: [],
             total: 0,
-            tableData: [{
-                mobile: '18735386269',
-                name: '王小虎',
-                email: '18735386269@163.com',
-                role_name: '操作管理员',
-                mg_state: false,
-                address: '上海市普陀区金沙江路 1518 弄'
-            }, {
-                mobile: '18735386269',
-                name: '王小虎',
-                email: '18735386269@163.com',
-                role_name: '操作管理员',
-                mg_state: true,
-                address: '上海市普陀区金沙江路 1518 弄'
-            }, {
-                mobile: '18735386269',
-                name: '王小虎',
-                email: '18735386269@163.com',
-                role_name: '操作管理员',
-                mg_state: true,
-                address: '上海市普陀区金沙江路 1518 弄'
-            }, {
-                mobile: '18735386269',
-                name: '王小虎',
-                email: '18735386269@163.com',
-                role_name: '操作管理员',
-                mg_state: false,
-                address: '上海市普陀区金沙江路 1518 弄'
-            }]
         }
     },
     created() {
@@ -121,8 +79,8 @@ export default {
     methods: {
        async getUserList() {
        const {data: res} = await this.$http.get('users',{params: this.queryInfo })
-            console.log(res)
             if(res.meta.code !== 200) return this.$message.error(res.meta.msg)
+            console.log(res.data.users)
             this.userList = res.data.users
             this.total = res.data.total
         },
@@ -133,6 +91,15 @@ export default {
         handleCurrentChange(newPage) {
             this.queryInfo.pagenum = newPage
             this.getUserList()
+        },
+        //监听switch 开关状态
+       async userStateChanged(userinfo) {
+       const {data: res} = await this.$this.put(`users/${userinfo.id}/state/${userinfo.mg_state}`)
+            if(res.data.code !== 200) {
+                userinfo.mg_state = !userinfo.mg_state
+                return this.$message.error('更新用户失败')
+            }
+            this.$message.success('更新用户成功')
         }
     }
 }

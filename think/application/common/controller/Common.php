@@ -3,10 +3,13 @@ namespace app\common\controller;
 
 use think\Controller;
 use think\Request;
+use app\common\common\Api_result;
 
 class Common extends Controller
 {   
     public $param;
+    public $api_result;
+    
     public function _initialize()
     {   
         parent::_initialize();
@@ -16,6 +19,7 @@ class Common extends Controller
         header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
         header("Access-Control-Allow-Headers: Origin, X-Requested-With, Content-Type, Accept, Authorization, sessionId");
         $this->param = Request::instance()->param();
+        $this->api_result = Api_result::getInstance();
     }
 
     public function object_array($array)

@@ -17,6 +17,9 @@
 
 // Hook::add('app_init','app\\common\\behavior\\InitConfigBehavior');
 
+/**
+ * 返回结果结构
+ */
 function resultArray($array)
 {   
     $meta = [];
@@ -35,8 +38,21 @@ function resultArray($array)
         'meta' => $meta
     ];
 }
-
+/**
+ * 用户密码加密
+ */
 function user_md5($str, $auth_key = '')
 {
     return '' === $str ? '' : md5(sha1($str) . $auth_key);
 }
+
+/**
+ * 打印数组
+ */
+function dd($array)
+{
+    echo '<pre>';
+    print_r($array);
+    echo '</pre>';
+}
+

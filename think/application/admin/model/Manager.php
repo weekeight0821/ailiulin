@@ -1,10 +1,10 @@
 <?php
 namespace app\admin\model;
 
-use think\Model;
+use app\common\model\BaseModel;
 use think\facade\Session;
-use think\Db;
-class Manager extends Model
+
+class Manager extends BaseModel
 {   
     protected $name = 'manager';
     protected $mg_time = 'mg_time';
@@ -16,18 +16,9 @@ class Manager extends Model
     
     public function login($username, $password)
     {
-        if (empty($username)) {
-            $this->error = '用户不能为空';
-            return false;
-        }
-        
-        if (empty($password)) {
-            $this->error = '密码不能为空';
-            return false;
-        }
 
         $data['mg_name'] = $username;
-        $userInfo = $this->where($data)->find();
+        $userInfo = $this->query_one($data);
 
         if (!$userInfo) {
             $this->error = '帐号不存在';
@@ -68,7 +59,7 @@ class Manager extends Model
         $result = Db::table('sp_manager')->alias('m')->where($where)
                    ->join('sp_role r','r.role_id  = m.role_id ','LEFT')
                    ->page($pagenum)->limit($pagesize)->field('m.mg_id, m.mg_name, m.mg_mobile, m.mg_time, m.mg_email, r.role_name, m.mg_state')->select();
-        $count = count($result);
+        $count = $this->getCount($query);
 
         if (!empty($result)) {
             foreach($result as $val) {
@@ -81,7 +72,7 @@ class Manager extends Model
             $users = [];
         }
 
-        $data['totalpage'] = $count;
+        $data['total'] = $count;
         $data['pagenum'] = $pagenum;
         $data['users'] = $users;
         
